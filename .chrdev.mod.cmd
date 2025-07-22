@@ -1,1 +1,0 @@
-savedcmd_/home/matthatter/Practice/linux-driver/device_drivers/drv/chrdev.mod := printf '%s\n'   chrdev.o | awk '!x[$$0]++ { print("/home/matthatter/Practice/linux-driver/device_drivers/drv/"$$0) }' > /home/matthatter/Practice/linux-driver/device_drivers/drv/chrdev.mod
