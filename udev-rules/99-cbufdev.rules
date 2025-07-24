@@ -1,0 +1,1 @@
+KERNEL=="cbuf-0", SUBSYSTEM=="cbuf", MODE="0666"
