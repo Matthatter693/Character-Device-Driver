@@ -1,5 +1,5 @@
-obj-m:=chrdev.o
-
+obj-m:=driver/cbufdev.o
+ccflags-y = -I$(PWD)/include
 KERNEL_SRC ?= /lib/modules/$(shell uname -r)/build
 
 all default:modules
