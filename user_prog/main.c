@@ -11,7 +11,9 @@ char p[]="Hiii buddy!";
 char r[]="how are you?";
 char q[100];
 
-printf("str:%s\n",p);
+printf("str1:%s\n",p);
+printf("str2:%s\n",r);
+
 fd=open("/dev/cbuf-0",O_RDWR);
 if(fd<0)
 {
