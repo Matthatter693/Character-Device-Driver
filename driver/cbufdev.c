@@ -15,7 +15,7 @@ struct cdev_data
 
 typedef struct circ_buf
 {
-    char data[5][50];
+    char data[CBUFMSG][CBUFSZ];
     int count;
     int head;
     int tail;
