@@ -6,3 +6,4 @@ notes/
 *.o
 *.symvers
 *.order
+*.cmd
