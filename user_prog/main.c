@@ -65,6 +65,7 @@ int main(int argc,char *argv[])
                 }
                 printf("Read from device:%s\n",rx);
                 close(fd);
+                return 0;
                 break;
             case 'w':
                 strcpy(tx,optarg);
@@ -78,6 +79,7 @@ int main(int argc,char *argv[])
                     printf("This works dawg\n");
                 printf("Message written successfully\n");
                 close(fd);
+                return 0;
                 break;
             case 'h':
                 printf("Kernel Ring buffer CLI\n");
@@ -87,14 +89,17 @@ int main(int argc,char *argv[])
                 printf("To help:%s --help (or) %s -h\n",argv[0],argv[0]);
                 printf("*******************************************\n");
                 close(fd);
+                return 0;
                 break;
             case '?':
                 printf("write correct arguments :(\n");
                 close(fd);
+                return 0;
                 break;
             default:
                 printf("does this work?\n");
                 close(fd);
+                return 0;
                 exit(0);
         }
     }
