@@ -1,27 +1,5 @@
 #include"kernhead.h"
 
-#define CBUFMSG 50
-#define CBUFSZ 100
-
-//wrapping up the cdev struct
-
-struct cdev_data
-{
-    struct cdev cdev;
-    struct mutex lock;
-};
-
-//circ buffer struct
-
-typedef struct circ_buf
-{
-    char data[CBUFMSG][CBUFSZ];
-    int count;
-    int head;
-    int tail;
-}cbuf;
-
-
 //driver variables
 
 static int cdev_major = 0;
@@ -41,14 +19,12 @@ void cbufr_init(void)
 
 //file operation definitions
 
-
 //open
 static int cdev_open(struct inode *inode,struct file *file)
 {
     printk(KERN_DEBUG"Entering: %s\n",__func__);
     return 0;
 }
-
 
 //close
 static int cdev_release(struct inode *inode,struct file *file)
@@ -70,18 +46,18 @@ static ssize_t cdev_read(struct file *file, char __user *buf,size_t count,loff_t
     size_t udatalen;
    
 
-    //critical section entering mutex lock
-    if(mutex_lock_interruptible(&mycdev_data.lock))
-        return -ERESTARTSYS;
-    
     printk(KERN_DEBUG"Entering: %s\n",__func__);
-    
+
     //buffer-check
     if((cbufr->count)==0)
     {
         printk(KERN_ERR"Buffer is empty\n");
         return -EFAULT;
     }
+
+    //critical section entering mutex lock
+    if(mutex_lock_interruptible(&mycdev_data.lock))
+        return -ERESTARTSYS; 
     
     //determining read length 
     udatalen=strlen(cbufr->data[cbufr->tail]);
@@ -94,6 +70,7 @@ static ssize_t cdev_read(struct file *file, char __user *buf,size_t count,loff_t
     if(copy_to_user(buf,cbufr->data[cbufr->tail],count)!=0)
     { 
         printk(KERN_ERR"Copy to the user failed\n");
+        mutex_unlock(&mycdev_data.lock);
         return -EFAULT;
     }
     
@@ -110,12 +87,6 @@ static ssize_t cdev_read(struct file *file, char __user *buf,size_t count,loff_t
 //write operation
 static ssize_t cdev_write(struct file *file,const char __user *buf,size_t count,loff_t *offset)
 {
-    size_t udatalen=CBUFSZ;
-    size_t nbr_chars = 0;
-
-    if(mutex_lock_interruptible(&mycdev_data.lock))
-        return -ERESTARTSYS;
-
     printk(KERN_DEBUG"Entering %s\n",__func__);
 
     if((cbufr->count)==CBUFMSG)
@@ -123,6 +94,13 @@ static ssize_t cdev_write(struct file *file,const char __user *buf,size_t count,
         printk(KERN_ERR"Buffer is full\n");
         return -EFAULT;
     }
+
+    //mutex-lock
+    if(mutex_lock_interruptible(&mycdev_data.lock))
+        return -ERESTARTSYS;
+
+    size_t udatalen=CBUFSZ;
+    size_t nbr_chars = 0;
 
     if(count<udatalen)
         udatalen=count;
@@ -139,9 +117,11 @@ static ssize_t cdev_write(struct file *file,const char __user *buf,size_t count,
     else
     {
         printk(KERN_ERR"Copy data from user failed\n");
+        mutex_unlock(&mycdev_data.lock);
         return -EFAULT;
     }
 
+    //mutex unlock
     mutex_unlock(&mycdev_data.lock);
     return count;
 }
@@ -240,7 +220,7 @@ void cleanup_module(void)
         kfree(cbufr);
 }
 
-MODULE_DESCRIPTION("CIRCULAR BUFFER DEVICE");
+MODULE_DESCRIPTION("RING BUFFER DEVICE");
 MODULE_VERSION("1.0");
 MODULE_AUTHOR("Praveen Shanmugam <pra060903@gmail.com>");
 MODULE_LICENSE("GPL");
