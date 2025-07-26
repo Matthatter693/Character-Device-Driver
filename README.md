@@ -5,7 +5,7 @@ It is a loadable kernel module that can be loaded at run-time.
 
 ---
 
-## STRUCTURE
+## STRUCTURE:
 
 The file structure of the repository as follows:
 
@@ -25,9 +25,9 @@ The file structure of the repository as follows:
 
 ---
 
-## INSTRUCTIONS
+## INSTRUCTIONS:
 
-- Run anyone of the following snippet of your choice to clone the repo from the github
+- Run anyone of the following snippet of your choice to clone the repo from the github.:
 
 ```
 $ git clone https://github.com/Matthatter693/Circular-Buffer-Device-Driver.git //Through HTTPS
@@ -35,9 +35,9 @@ $ git clone git@github.com:Matthatter693/Circular-Buffer-Device-Driver.git     /
 $ gh repo clone Matthatter693/Circular-Buffer-Device-Driver                    //Through Github-Cli
 ```
 
-### KERNEL SIDE
+### KERNEL SIDE:
 
-- On kernel side to compile the driver run the following make command
+- On kernel side to compile the driver run the following make command.
 
 ```
 $ make all
@@ -45,27 +45,27 @@ $ make all
 
 **NOTE**: This following makefile compiles with the headers of the host's kernel version. If you are compiling it for the out-of-tree deployment make sure to adjust the path in the makefile accordingly.
 
-- After running you will be finding the object files and module files of the corresponding driver,verify with
+- After running you will be finding the object files and module files of the corresponding driver,verify with.
   
 ```
 $ ls driver/
   cbufdev.c  cbufdev.ko  cbufdev.mod  cbufdev.mod.c  cbufdev.mod.o  cbufdev.o
 ```
 
-- Then run this snippet to apply the udev rules
+- Then run this snippet to apply the udev rules.
 
 ```
 $ sudo cp udev-rules/99-cbufdev.rules /etc/udev/rules.d/
 ```
 
-- Change into driver directory and load the kernel driver into the kernel
+- Change into driver directory and load the kernel driver into the kernel.
 
 ```
 $ cd drivers
 $ sudo insmod cbufdev.ko
 ```
 
-- Later verify whether the module is loaded with appropriate permissions
+- Later verify whether the module is loaded with appropriate permissions.
 
 ```
 $lsmod | grep -i "cbufdev"     
@@ -96,7 +96,7 @@ $ ls -lrta /dev/cbuf-0
 crw-rw-rw- 1 root root 510, 0 Jul 24 21:21 /dev/cbuf-0
 ```
 
-- Additionally use dmesg to look at the kernel's debug log
+- Additionally use dmesg to look at the kernel's debug log.
 
 ```
 [31696.605262] Entering: cdev_release
@@ -125,29 +125,53 @@ It concludes that the module is loaded successfully and you can now successfully
 
 ---
 
-### USER SPACE SIDE
+### USER SPACE SIDE:
 
-- For this compile the main program present in the user_prog
+- Run the make command in the user_prog directory to compile the program.
     
 ```
-gcc main.c -o main
+$ cd user_prog
+$ make
 ```
 
-- This program writes and reads the string twice so the output will be more like
+- This program accepts the following arguments as options.To write into the buffer use --write and pass the message.
 
 ```
-$ ./main
-str1:Hiii buddy!
-str2:how are you?
-message sent
-message sent
-Read from device:Hiii buddy!
-Read from device:how are you?
+$ ./main --write "Hii my buddy"
+open: Success
+Message written successfully
+```
+
+- To read from the buffer run with the --read option.
+
+```
+$ ./main --read
+open: Success
+Read from device:Hii my buddy
+```
+
+- Run --help for the help options.
+
+```
+$ ./main --help
+open: Success
+Kernel Ring buffer CLI
+*******************************************
+To write message:./main --write message (or) ./main -w message
+To read message:./main --read (or) ./main -r
+To help:./main --help (or) ./main -h
+*******************************************
+```
+
+- After run make clean to clean up.
+```
+$ make clean
+rm -f main
 ```
 ---
 ## CLEANUP
 
-- After every work is done you can unload the module with rmmod command
+- After every work is done you can unload the module with rmmod command.
 
 ```
 sudo rmmod cbufdev.ko
