@@ -57,6 +57,8 @@ int main(int argc,char *argv[])
                     break;
                 break;
             case 'r': 
+                if(verbose_flag)
+                    printf("reading from the device\n");
                 if(read(fd,rx,sizeof(rx))<0)
                 {
                     perror("failed to read");
@@ -68,6 +70,8 @@ int main(int argc,char *argv[])
                 return 0;
                 break;
             case 'w':
+                if(verbose_flag)
+                    printf("the string is accepted..writing into the device\n");
                 strcpy(tx,optarg);
                 if(write(fd,tx,strlen(tx)+1)<0)
                 {
@@ -76,7 +80,7 @@ int main(int argc,char *argv[])
                     return 1;
                 }
                 if(verbose_flag)
-                    printf("This works dawg\n");
+                    printf("Message written into buffer:%s\n",tx);
                 printf("Message written successfully\n");
                 close(fd);
                 return 0;
