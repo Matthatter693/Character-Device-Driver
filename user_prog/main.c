@@ -45,7 +45,10 @@ int main(int argc,char *argv[])
         int option_index=0;
         opt=getopt_long(argc,argv,"rhw:",long_options,&option_index);
         if(opt==-1)
+        {
+            printf("Wrong usage! run \"%s --help\" for more info\n",argv[0]);
             break;
+        }
 
         switch(opt)
         {
@@ -77,7 +80,12 @@ int main(int argc,char *argv[])
                 close(fd);
                 break;
             case 'h':
-                printf("not planned yet\n");
+                printf("Kernel Ring buffer CLI\n");
+                printf("*******************************************\n");
+                printf("To write message:%s --write message (or) %s -w message\n",argv[0],argv[0]);
+                printf("To read message:%s --read (or) %s -r\n",argv[0],argv[0]);
+                printf("To help:%s --help (or) %s -h\n",argv[0],argv[0]);
+                printf("*******************************************\n");
                 close(fd);
                 break;
             case '?':
@@ -85,7 +93,7 @@ int main(int argc,char *argv[])
                 close(fd);
                 break;
             default:
-                printf("Please provide some options\n");
+                printf("does this work?\n");
                 close(fd);
                 exit(0);
         }
